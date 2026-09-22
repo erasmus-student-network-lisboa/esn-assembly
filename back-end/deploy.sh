@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # project-specific parameters
-AWS_PROFILE='esn-ga'
-PROJECT='esn-ga'
+AWS_PROFILE='esnlisboa'
+PROJECT='esn-assembly-lisboa-2'
 
 # other parameters
 ACTION=$1

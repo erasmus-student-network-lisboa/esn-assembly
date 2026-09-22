@@ -28,6 +28,6 @@
   "editor.renderLineHighlight": "all",
   "workbench.iconTheme": "vs-seti",
   "window.zoomLevel": 0,
-  "extensions.ignoreRecommendations": false,
+  "extensions.ignoreRecommendations": true,
   "editor.guides.indentation": true
 }

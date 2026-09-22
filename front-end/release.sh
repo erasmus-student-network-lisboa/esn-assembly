@@ -1,9 +1,9 @@
 #!/bin/bash
 
 # project specific parameters
-AWS_PROFILE='esn-ga'
-DOMAIN_PROD='esn-ga.link'
-DOMAIN_DEV='dev.esn-ga.link'
+AWS_PROFILE='esnlisboa'          # or whatever your local profile is called — must use account 085603761600
+DOMAIN_PROD='ga.esnlisboa.org'
+DOMAIN_DEV='dev.ga.esnlisboa.org' # doesn't exist yet
 
 # other parameters
 ACTION=$1
@@ -44,7 +44,7 @@ npm run lint ${SRC_FOLDER} 1>/dev/null
 
 # compile the project's typescript code
 echo -e "${C}Compiling...${NC}"
-ionic build --prod 1>/dev/null
+npx ionic build --prod 1>/dev/null
 
 # get the target CloudFront distribution and S3 bucket (from the domain)
 DISTRIBUTION=`aws cloudfront list-distributions --query "DistributionList.Items[*].{Id: Id, Aliases: Aliases.Items[?(@ == '${DOMAIN}')]} | [?Aliases].[Id]" --profile ${AWS_PROFILE} --output text`
@@ -57,8 +57,8 @@ aws s3 sync ./www s3://${BUCKET} --profile ${AWS_PROFILE} --delete --exclude ".w
 
 # invalidate old common files from the CloudFront distribution
 echo -e "${C}Cleaning...${NC}"
-aws cloudfront create-invalidation --profile ${AWS_PROFILE} --distribution-id ${DISTRIBUTION} \
-  --paths "/index.html" "/assets/i18n*" \
+MSYS_NO_PATHCONV=1 aws cloudfront create-invalidation --profile ${AWS_PROFILE} --distribution-id ${DISTRIBUTION} \
+  --paths "/index.html" "/assets/i18n/*" \
   1>/dev/null
 
 echo -e "${C}Done!${NC}"

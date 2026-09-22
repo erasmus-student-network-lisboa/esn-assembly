@@ -37,7 +37,7 @@ const SES_CONFIG = {
   sourceArn: process.env.SES_IDENTITY_ARN,
   region: process.env.SES_REGION
 };
-const ses = new SES();
+const ses = new SES({ region: SES_CONFIG.region });
 
 export const handler = (ev: any, _: any, cb: any): Promise<void> => new Questions(ev, cb).handleRequest();
 

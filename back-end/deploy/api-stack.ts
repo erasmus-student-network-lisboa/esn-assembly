@@ -27,7 +27,7 @@ export interface ApiProps extends cdk.StackProps {
   resourceControllers: ResourceController[];
   tables: { [tableName: string]: DDBTable };
   mediaBucketArn: string;
-  ses: { identityArn: string; notificationTopicArn: string };
+  ses: { region: string; domain: string; notificationTopicArn: string };
   removalPolicy: RemovalPolicy;
   lambdaLogLevel: 'TRACE' | 'DEBUG' | 'INFO' | 'WARN' | 'ERROR' | 'FATAL';
   appDomain: string;
@@ -106,8 +106,8 @@ export class ApiStack extends cdk.Stack {
     this.allowLambdaFunctionsToSystemsManager({ lambdaFunctions: Object.values(lambdaFunctions) });
     this.allowLambdaFunctionsToAccessSES({
       lambdaFunctions: Object.values(lambdaFunctions),
-      sesIdentityArn: props.ses.identityArn,
-      apiDomain: props.apiDomain
+      sesRegion: props.ses.region,
+      sesDomain: props.ses.domain
     });
 
     const { tables } = this.createDDBTablesAndAllowLambdaFunctions({
@@ -330,20 +330,20 @@ export class ApiStack extends cdk.Stack {
   }
   private allowLambdaFunctionsToAccessSES(params: {
     lambdaFunctions: NodejsFunction[];
-    sesIdentityArn: string;
-    apiDomain: string;
+    sesRegion: string;
+    sesDomain: string;
   }): void {
-    const region = cdk.Stack.of(this).region;
+    const account = cdk.Stack.of(this).account;
+    const sesIdentityArn = `arn:aws:ses:${params.sesRegion}:${account}:identity/${params.sesDomain}`;
 
     const accessSES = new IAM.Policy(this, 'ManageSES', {
       statements: [new IAM.PolicyStatement({ effect: IAM.Effect.ALLOW, actions: ['ses:*'], resources: ['*'] })]
     });
     params.lambdaFunctions.forEach(lambdaFn => {
       if (lambdaFn.role) lambdaFn.role.attachInlinePolicy(accessSES);
-      lambdaFn.addEnvironment('SES_IDENTITY_ARN', params.sesIdentityArn);
-      const domainName = params.apiDomain.split('.').slice(-2).join('.');
-      lambdaFn.addEnvironment('SES_SOURCE_ADDRESS', `no-reply@${domainName}`);
-      lambdaFn.addEnvironment('SES_REGION', region);
+      lambdaFn.addEnvironment('SES_IDENTITY_ARN', sesIdentityArn);
+      lambdaFn.addEnvironment('SES_SOURCE_ADDRESS', `no-reply@${params.sesDomain}`);
+      lambdaFn.addEnvironment('SES_REGION', params.sesRegion);
     });
   }
 

@@ -26,7 +26,7 @@ const TEST_EMAIL_EXAMPLE_TITLE = 'Amazing title';
 const TEST_EMAIL_EXAMPLE_DETAIL = 'An awesome detail';
 const TEST_EMAIL_EXAMPLE_URL = BASE_URL;
 const TEST_EMAIL_EXAMPLE_MESSAGE = 'A custom message';
-const ses = new SES();
+const ses = new SES({ region: SES_CONFIG.region });
 
 const s3 = new S3();
 const S3_BUCKET_MEDIA = process.env.S3_BUCKET_MEDIA;

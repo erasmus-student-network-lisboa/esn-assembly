@@ -1,23 +1,25 @@
 /**
  * The codename of the project.
  */
-export const PROJECT = 'esn-ga';
+export const PROJECT = 'esn-assembly-lisboa-2';
 /**
  * The purchased domain to use.
  */
-export const DOMAIN = 'esn-ga.link';
+export const DOMAIN = 'ga.esnlisboa.org';
 /**
  * An additional custom domain to use.
  */
-export const PROD_CUSTOM_DOMAIN: string | null = 'ga.esn.org'; // in case of first creation, use: `null`
+export const PROD_CUSTOM_DOMAIN: string | null = 'ga.esnlisboa.org'; // in case of first creation, use: `null`
 
 export const parameters: Parameters = {
   project: PROJECT,
   apiDomain: 'api.'.concat(DOMAIN),
   webSocketApiDomain: 'socket.'.concat(DOMAIN),
   mediaDomain: 'media.'.concat(DOMAIN),
+  sesRegion: 'eu-central-1',
+  sesDomain: DOMAIN,
   frontEndCertificateARN: PROD_CUSTOM_DOMAIN
-    ? 'arn:aws:acm:us-east-1:772823474617:certificate/12d7466b-c989-46ee-86c5-61b2cda3c35c'
+    ? 'arn:aws:acm:us-east-1:085603761600:certificate/8843fe79-4b8c-46a7-86a7-29161776a6b6'
     : undefined
 };
 
@@ -52,6 +54,14 @@ export interface Parameters {
    * The domain name where to reach the front-end's media files.
    */
   mediaDomain: string;
+  /**
+   * The region of the SES identity used to send emails (it must be verified and out of the sandbox).
+   */
+  sesRegion: string;
+  /**
+   * The SES verified domain identity; emails are sent from `no-reply@${sesDomain}`.
+   */
+  sesDomain: string;
   /**
    * The custom front-end certificate ARN to use, to support alternative domains.
    */
