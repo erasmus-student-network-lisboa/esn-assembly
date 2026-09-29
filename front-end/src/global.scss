@@ -113,6 +113,13 @@ ion-list.aList {
     ion-label p {
       color: var(--ion-color-step-600) !important;
     }
+    // Outline icons (e.g. trash-outline) inherit item text color on dark rows; force danger tint.
+    ion-button[fill='clear'][color='danger'] {
+      --color: var(--ion-color-danger);
+      ion-icon {
+        color: var(--ion-color-danger);
+      }
+    }
   }
   ion-row.row,
   ion-item:not([color]) {
